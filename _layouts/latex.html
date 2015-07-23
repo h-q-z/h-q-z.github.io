@@ -1,3 +1,4 @@
+
 <html>
   <head>
     <meta charset="UTF-8">
@@ -5,6 +6,10 @@
     {% include mathjax.html %}
   </head>
   <body>
+      <a href="/sandbox/ontouchstart">/sandbox/ontouchstart</a> | 
+      {{ page.title }} |
+      <a href="{{ site.repository }}/{{ page.path | | replace:'/repo/','' }}">GitHub</a>
+      <hr/>
       {{ content }}
   </body>
 </html>
