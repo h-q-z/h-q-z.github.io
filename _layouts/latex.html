@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     {% include mathjax.html %}
+    <title>{{ page.title }}</title>
   </head>
   <body>
-      <a href="/sandbox/ontouchstart">/sandbox/ontouchstart</a> | 
-      {{ page.title }} |
-      <a href="{{ site.repository }}/{{ page.path | | replace:'/repo/','' }}">GitHub</a>
+      {{ page.title }} 
       <hr/>
       {{ content }}
   </body>
