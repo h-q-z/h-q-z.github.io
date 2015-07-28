@@ -70,3 +70,44 @@ Function(Integer, Integer) g = x -> x*2;
 Function(Integer, Integer) h = f.compose(g);
 int result = h.apply(1);  // This returns 3. f(g(x))
 ```
+
+### 3. Stream API
+
+##### 3.1 Old Java Example
+```java
+List<Dish> lowCalDishes = new ArrayList<>();
+for(Dish d: menu) {
+  if (d.getCalories() < 400) {
+    lowCalDishes.add(d);
+  }
+}
+Collections.sort(lowCalDishes, new Comparator<Dish>() {
+  public int compare(int d1, int d2){
+    return Integer.compare(d1.getCalories(), d2.getCalories());
+  }
+});
+List<String> lowCaloriesDishesNames = new ArrayList<>();
+for (Dish d : lowCalDishes) {
+  lowCaloriesDishesNames.add(d.getName());
+}
+```
+
+##### Using Stream API
+
+```java
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
+List<String> lowCaloriesDishesNames = menu.stream().filter(d -> d.getCalories() < 400)
+                                                   .sorted(comparing(Dish.getCalories))
+                                                   .map(Dish.getName)
+                                                   .collect(toList());
+```
+
+##### Run in parallel
+```java
+List<String> lowCaloriesDishesNames = menu.parallelStream()
+                                                   .filter(d -> d.getCalories() < 400)
+                                                   .sorted(comparing(Dish.getCalories))
+                                                   .map(Dish.getName)
+                                                   .collect(toList());
+```
