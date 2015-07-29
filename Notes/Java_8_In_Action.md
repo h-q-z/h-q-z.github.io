@@ -111,3 +111,23 @@ List<String> lowCaloriesDishesNames = menu.parallelStream()
                                                    .map(Dish.getName)
                                                    .collect(toList());
 ```
+
+##### Intermediate Operations
+```java
+List<String> names = menu.stream().filter(d -> {
+                                                  System.out.println("Filtering " + d.getName());
+                                                  return d.getCalories() > 300;
+                                                })
+                                  .map(d -> {
+                                               System.out.println("Mapping " + d.getName());
+                                               return d.getName();
+                                            })
+                                  .limit(3)
+                                  .collect(toList());
+System.out.println(names);
+```
+
+##### Filter unique elements
+```java
+List<Integer> numbers = Arrays.asList(1,2,1,3,3,2,4)l   
+```
