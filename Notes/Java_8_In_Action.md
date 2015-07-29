@@ -175,3 +175,97 @@ public static long parallelSum(long n) {
 ```java
   System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "12"); // global setting
 ```
+
+##### 4.2 Future: Async Example
+```java
+public Future<Double> getPriceAsync(String product) {
+  CompletableFuture<Double> futurePrice = new CompletableFuture<>();
+  new Thread( () -> { try {
+                            double price = calculatePrice(product);
+                            futurePrice.complete(price);
+                          } catch (Exception ex) {
+                            futurePrice.completeExceptionally(ex);
+                          }
+                    }).start();
+  return futurePrice;
+}
+
+Shop s = new Shop("BestShop");
+Future<Double> futurePrice = shop.getPriceAsync("DreamProduct");
+
+doSomethingElse();
+
+try {
+  double price = futurePrice.get(); // this will read or block if not available yet
+} catch (Exception ex) {
+  throw new RuntimeException(ex);
+}
+
+```
+
+##### Example of Finding all Prices in Shop
+```java
+public List<String> findPrices(String product) {
+  List<CompletableFuture<String>> priceFutures = shops.stream()
+          .map(shop -> 
+               CompletableFuture.supplyAsync( () -> shop.getName() + " price is " + shop.getPrice(product)))
+          .collect(Collectors.toList());
+  return priceFutures.stream().map(CompletableFuture::join).collect(toList));
+}
+```
+
+##### Using ExecutorService
+```java
+ExecutorService executor = Executors.newCachedThreadPool();
+final Future<Double> futureRate = executor.submit(new Callable<Double>() {
+    public Double call() {
+      return exchangeService.getRate(Money.EUR, money.USD);
+    }
+  });
+Future<Double> futurePriceInUSD = executor.submit(new Callable<Double>() {
+    public double call() {
+      double priceInEUR = shop.getPrice(product);
+      return priceInEUR * futureRate.get();
+    }
+  });  
+  
+public Stream<CompletableFuture<String>> findPricesStream(String product) {
+  return shops.stream().map(shop -> CompletableFuture.supplyAsync( () -> shop.getPrice(product), executor))
+                       .map(future -> future.thenApply(Quote::parse))
+                       .map(future -> future.thenCompose(
+                              quote -> CompletableFuture.supplyAsync( 
+                                          () -> Discount.applyDiscount(quote), executor)));
+}
+
+CompletableFuture[] futures = findPricesStream("myPhone")
+      .map(f -> f.thenAccept(System.out::println))
+      .toArray(size -> new CompletableFuture[size]);
+CompletableFutures.allOf(futures).join();
+```
+
+### 5. New Date and Time API
+```java
+LocalDate date = LocalDate.of(2014, 3, 18);
+int year = date.getYear();
+
+LocalDate today = LocalDate.now();
+LocalTime t1 = LocalTime.of(13, 45, 20); // 13:45:20
+
+LocalDate d2 = LocalDate.parse("2014-03-18");
+LocalTime t2 = LocalTime.parse("13:45:20");
+
+LocalDateTime dt1 = LocalDateTime.of(2014, Month.MARCH, 18, 13, 45, 20);
+LocalDateTime dt2 = LocalDateTime.of(date, time);
+
+LocalDate d3 = dt1.toLocalDate();
+
+Instant.ofEpochSecond(3,0);
+
+Duration du1 = Duration.between(time1, time2);
+Duration du2 = Duration.ofMinutes(3);
+
+Period twoYearsSixMonthsOneDay = Period.of(2, 6, 1);
+Period p = Period.between(LocalDate.of(2014, 3, 1), LocalDate.of(2014, 7, 19));
+```
+
+
