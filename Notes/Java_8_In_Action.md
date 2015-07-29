@@ -122,6 +122,7 @@ List<String> names = menu.stream().filter(d -> {
                                                System.out.println("Mapping " + d.getName());
                                                return d.getName();
                                             })
+                                  .skip(2)
                                   .limit(3)
                                   .collect(toList());
 System.out.println(names);
@@ -129,5 +130,38 @@ System.out.println(names);
 
 ##### Filter unique elements
 ```java
-List<Integer> numbers = Arrays.asList(1,2,1,3,3,2,4)l   
+List<Integer> numbers = Arrays.asList(1,2,1,3,3,2,4);
+numbers.stream().filter(i -> i % 2 == 0).distinct().forEach(System.out::println);
 ```
+
+##### FlatMap
+```java
+String[] arrayOfWords = {"Remember", "my", "sun-and-star", "remember", "come", "back", "to", "me"};
+arrayOfWords.stream().map)w -> w.split("")).flatMap(Array::stream).distinct().collect(Collectors.toList());
+```
+
+##### Reduce & Collect
+```java
+int sum = numbers.reduce(0, (a,b) -> a+b);
+Optional<Integer> min = numbers.reduce(Integer::min);
+Optional<Dish> mostCaloriesDish = menu.stream().collect(reducing( (d1,d2) -> d1.getCalories() > d2.getCalories() ? d1 : d2);
+
+int totalCalories = menu.stream().collect(reducing(1, Dish::getCalories, Integer::sum));
+
+Map<Dish.Type, List<Dish>> dishesByType = menu.stream().collect(groupingBy(Dish::getType));
+Map<Dish.Type, Long> typesCount = menu.stream().collect(groupingBy(Dish::getType, counting()));
+```
+
+##### Example: test if prime
+```java
+public boolean isPrime(int candidate) {
+  int candidateRoot = (int)Math.sqrt((double)candidate);
+  return IntStream.rangeClosed(2, candidateRoot).noneMatch(i -> candidate % i == 0);
+}
+
+public Map<Boolean, List<Integer>> partitionPrimes(int n) {
+  return IntStream.rangeClosed(2,n).boxed().collect(partitioningBy(candidate -> isPrime(candidate)));
+}
+
+```
+
