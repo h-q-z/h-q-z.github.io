@@ -92,7 +92,7 @@ for (Dish d : lowCalDishes) {
 }
 ```
 
-##### Using Stream API
+##### 3.2 Using Stream API
 
 ```java
 import static java.util.Comparator.comparing;
@@ -103,7 +103,7 @@ List<String> lowCaloriesDishesNames = menu.stream().filter(d -> d.getCalories() 
                                                    .collect(toList());
 ```
 
-##### Run in parallel
+##### 3.3 Run in parallel
 ```java
 List<String> lowCaloriesDishesNames = menu.parallelStream()
                                                    .filter(d -> d.getCalories() < 400)
@@ -112,7 +112,7 @@ List<String> lowCaloriesDishesNames = menu.parallelStream()
                                                    .collect(toList());
 ```
 
-##### Intermediate Operations
+##### 3.4 Intermediate Operations
 ```java
 List<String> names = menu.stream().filter(d -> {
                                                   System.out.println("Filtering " + d.getName());
@@ -128,20 +128,17 @@ List<String> names = menu.stream().filter(d -> {
 System.out.println(names);
 ```
 
-##### Filter unique elements
+##### 3.5 Filter unique elements
 ```java
 List<Integer> numbers = Arrays.asList(1,2,1,3,3,2,4);
 numbers.stream().filter(i -> i % 2 == 0).distinct().forEach(System.out::println);
 ```
 
-##### FlatMap
+##### 3.6 FlatMap, reduce, & collect
 ```java
 String[] arrayOfWords = {"Remember", "my", "sun-and-star", "remember", "come", "back", "to", "me"};
 arrayOfWords.stream().map)w -> w.split("")).flatMap(Array::stream).distinct().collect(Collectors.toList());
-```
 
-##### Reduce & Collect
-```java
 int sum = numbers.reduce(0, (a,b) -> a+b);
 Optional<Integer> min = numbers.reduce(Integer::min);
 Optional<Dish> mostCaloriesDish = menu.stream().collect(reducing( (d1,d2) -> d1.getCalories() > d2.getCalories() ? d1 : d2);
@@ -165,3 +162,16 @@ public Map<Boolean, List<Integer>> partitionPrimes(int n) {
 
 ```
 
+### 4. Parallel Processing
+
+##### 4.1 Turn sequential into parallel
+```java
+public static long parallelSum(long n) {
+  return Stream.iterate(1L, i -> i+1).limit(n).parallel().reduce(0L, Long::sum);
+}
+```
+
+* Config Thread Pool: 
+```java
+  System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "12"); // global setting
+```
